@@ -1,0 +1,34 @@
+# --- Core LLM & Orchestration ---
+langchain
+langchain-community
+langchain-mcp-adapters
+langchain-ollama
+langgraph
+
+# --- aws connection ---
+boto3
+langchain_aws
+
+# --- MCP (Model Context Protocol) ---
+mcp[cli]
+
+# --- Voice (Whisper STT) ---
+faster-whisper
+sounddevice
+soundfile
+webrtcvad
+numpy
+pyttsx3
+# --- Web tools for browsing (fetch/scrape/summarize) ---
+httpx
+beautifulsoup4
+readability-lxml
+lxml
+
+# --- App & Env ---
+streamlit
+python-dotenv
+
+# --- Dev tools (formatting) ---
+black
+isort
