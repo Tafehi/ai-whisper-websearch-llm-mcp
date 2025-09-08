@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 
 # Initialize MCP tool server
-mcp = FastMCP(name="searchOne", host="localhost", port=8001)
+mcp = FastMCP(name="searchone", host="localhost", port=8001)
 
 class SearchOneApiSearch:
     def __init__(self):
@@ -27,8 +27,20 @@ class SearchOneApiSearch:
         language: str = "en",
         time_range: Optional[str] = None
     ) -> str:
+
         """
-        Implementation: Search the web using SearchOne (search1api) and return a readable summary string.
+        Search the web using SearchOne (search1api).
+
+        Args:
+            query: Search query (required)
+            search_service: 'google' | 'bing' | 'duckduckgo' (default: google)
+            max_results: Number of links to return (default: 5)
+            crawl_results: Number of links to crawl for content (default: 0)
+            image: Set True to search images (default: False)
+            include_sites: Comma-separated allowlist of domains
+            exclude_sites: Comma-separated blocklist of domains
+            language: ISO language code (default: 'en')
+            time_range: e.g., 'day' | 'week' | 'month' | 'year' (optional)
         """
 
         if not self._BASE_URL:

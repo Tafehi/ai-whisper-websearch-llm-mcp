@@ -33,7 +33,7 @@ class BedrockLLM:
                 "llm_model": ChatBedrockConverse(
                     model_id=self._model,
                     client=bedrock_client,
-                    temperature=0.1,
+                    temperature=0,
                     timeout=10,
                 ),
             }

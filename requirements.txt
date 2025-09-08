@@ -4,7 +4,7 @@ langchain-community
 langchain-mcp-adapters
 langchain-ollama
 langgraph
-
+openai
 # --- aws connection ---
 boto3
 langchain_aws

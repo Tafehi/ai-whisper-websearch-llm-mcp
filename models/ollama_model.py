@@ -19,7 +19,7 @@ class OllamaLLM:
                 "llm_provider": "ollama",
                 "llm_model": ChatOllama(
                     model=self._model,
-                    temperature=0.1,
+                    temperature=0,
                     num_predict=256,
                     timeout=10,
                     # other params ...
