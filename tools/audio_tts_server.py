@@ -6,16 +6,18 @@ from typing import Optional, List
 from dotenv import load_dotenv
 from mcp.server.fastmcp import FastMCP
 import pyttsx3
+
 # Initialize MCP server
 mcp = FastMCP(name="audioTools", host="localhost", port=8003)
+
 
 class TTSBackend:
     def __init__(self):
         load_dotenv()
         self._engine = None
         # Defaults (can be overridden via tool args)
-        self.default_voice_query = os.getenv("TTS_VOICE", "")        # substring or id/name
-        self.default_rate = int(os.getenv("TTS_RATE", "180"))        # words per minute
+        self.default_voice_query = os.getenv("TTS_VOICE", "")  # substring or id/name
+        self.default_rate = int(os.getenv("TTS_RATE", "180"))  # words per minute
         self.default_volume = float(os.getenv("TTS_VOLUME", "1.0"))  # 0.0–1.0
 
     def _ensure_engine(self):
@@ -89,14 +91,21 @@ class TTSBackend:
             # Store as the new default for future engine resets (current process)
             self.default_voice_query = voice_query
             # Read back properties
-            rate = self._engine.getProperty('rate')
-            volume = self._engine.getProperty('volume')
+            rate = self._engine.getProperty("rate")
+            volume = self._engine.getProperty("volume")
             return f"✅ Default voice set to id='{chosen}' (query='{voice_query}'), rate={rate}, volume={volume}"
         else:
             return f"❌ No voice matched query: '{voice_query}'. Use list_tts_voices(query) to find options."
 
     # ---------- Synthesis ----------
-    def _synthesize_sync(self, text: str, out_path: str, voice: Optional[str], rate: Optional[int], volume: Optional[float]) -> str:
+    def _synthesize_sync(
+        self,
+        text: str,
+        out_path: str,
+        voice: Optional[str],
+        rate: Optional[int],
+        volume: Optional[float],
+    ) -> str:
         """Blocking pyttsx3 call executed in a thread."""
         if not text or not text.strip():
             return "❌ TTS input text is empty."
@@ -130,28 +139,53 @@ class TTSBackend:
             traceback.print_exc()
             return f"❌ TTS error: {str(e)}"
 
-    async def synthesize(self, text: str, out_path: str, voice: Optional[str], rate: Optional[int], volume: Optional[float]) -> str:
+    async def synthesize(
+        self,
+        text: str,
+        out_path: str,
+        voice: Optional[str],
+        rate: Optional[int],
+        volume: Optional[float],
+    ) -> str:
         # Run blocking TTS in a thread to avoid blocking the event loop
-        return await asyncio.to_thread(self._synthesize_sync, text, out_path, voice, rate, volume)
+        return await asyncio.to_thread(
+            self._synthesize_sync, text, out_path, voice, rate, volume
+        )
 
 
 # Backend instance
 _backend = TTSBackend()
 
+
 # ---------- MCP Tools (TOP-LEVEL, no 'self') ----------
-@mcp.tool(name="list_tts_voices", description="List available TTS voices and their IDs/names. Optional filter with 'query'.")
+@mcp.tool(
+    name="list_tts_voices",
+    description="List available TTS voices and their IDs/names. Optional filter with 'query'.",
+)
 async def list_tts_voices(query: str = "") -> str:
     return _backend.list_voices_text(query=query)
 
-@mcp.tool(name="get_current_tts_voice", description="Get the currently active TTS voice id and name.")
+
+@mcp.tool(
+    name="get_current_tts_voice",
+    description="Get the currently active TTS voice id and name.",
+)
 async def get_current_tts_voice() -> str:
     return _backend.get_current_voice_text()
 
-@mcp.tool(name="set_default_tts_voice", description="Set the default TTS voice by id or name (exact or substring).")
+
+@mcp.tool(
+    name="set_default_tts_voice",
+    description="Set the default TTS voice by id or name (exact or substring).",
+)
 async def set_default_tts_voice(voice_query: str) -> str:
     return _backend.set_default_voice(voice_query)
 
-@mcp.tool(name="synthesize_speech", description="Convert text to speech and save to an audio file (WAV).")
+
+@mcp.tool(
+    name="synthesize_speech",
+    description="Convert text to speech and save to an audio file (WAV).",
+)
 async def synthesize_speech(
     text: str,
     out_path: str = "out.wav",
@@ -175,7 +209,10 @@ async def synthesize_speech(
         # We still allow custom extensions, but pyttsx3 is most reliable with .wav
         pass
 
-    return await _backend.synthesize(text=text, out_path=out_path, voice=voice, rate=rate, volume=volume)
+    return await _backend.synthesize(
+        text=text, out_path=out_path, voice=voice, rate=rate, volume=volume
+    )
+
 
 if __name__ == "__main__":
     mcp.run(transport="streamable-http")

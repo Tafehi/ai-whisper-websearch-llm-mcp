@@ -31,19 +31,25 @@ class AudioBackend:
         # ----- OpenAI Whisper (API) -----
         self.openai_api_key = os.getenv("OPENAI_API_KEY")
         self.whisper_model = os.getenv("WHISPER_OPENAI_MODEL", "whisper-1")
-        self.whisper_language = os.getenv("WHISPER_LANGUAGE")  # e.g., "en", "no" (optional)
-        self.whisper_prompt = os.getenv("WHISPER_PROMPT")      # optional domain/context hint
+        self.whisper_language = os.getenv(
+            "WHISPER_LANGUAGE"
+        )  # e.g., "en", "no" (optional)
+        self.whisper_prompt = os.getenv(
+            "WHISPER_PROMPT"
+        )  # optional domain/context hint
         self._openai_client: Optional[OpenAI] = None
 
         # ----- Audio capture defaults -----
         self.sample_rate = int(os.getenv("SAMPLE_RATE", "16000"))
         self.channels = int(os.getenv("CHANNELS", "1"))
         self.default_duration = int(os.getenv("DURATION", "5"))  # seconds
-        self.input_device: Optional[Union[int, str]] = os.getenv("AUDIO_INPUT_DEVICE")  # optional
+        self.input_device: Optional[Union[int, str]] = os.getenv(
+            "AUDIO_INPUT_DEVICE"
+        )  # optional
 
         # ----- TTS (pyttsx3) -----
         self._tts_engine = None
-        self.default_voice = os.getenv("TTS_VOICE", "")    # substring match
+        self.default_voice = os.getenv("TTS_VOICE", "")  # substring match
         self.tts_rate = int(os.getenv("TTS_RATE", "180"))  # words per minute
         self.tts_volume = float(os.getenv("TTS_VOLUME", "1.0"))  # 0.0–1.0
 
@@ -71,18 +77,25 @@ class AudioBackend:
         device = device if device is not None else self.input_device
 
         # Configure and record
-        print(f"[audioTools] Recording {duration}s @ {sample_rate} Hz, channels={channels}, device={device}")
+        print(
+            f"[audioTools] Recording {duration}s @ {sample_rate} Hz, channels={channels}, device={device}"
+        )
         sd.default.samplerate = sample_rate
         sd.default.channels = channels
         if device is not None:
             sd.default.device = device
 
-        audio = sd.rec(int(duration * sample_rate), samplerate=sample_rate, channels=channels, dtype='int16')
+        audio = sd.rec(
+            int(duration * sample_rate),
+            samplerate=sample_rate,
+            channels=channels,
+            dtype="int16",
+        )
         sd.wait()
 
         # Save to temp WAV
         tmp = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
-        with wave.open(tmp.name, 'wb') as wf:
+        with wave.open(tmp.name, "wb") as wf:
             wf.setnchannels(channels)
             wf.setsampwidth(2)  # 16-bit PCM
             wf.setframerate(sample_rate)
@@ -98,11 +111,18 @@ class AudioBackend:
         lines = ["Available audio devices (input-capable):"]
         for idx, d in enumerate(devices):
             if int(d.get("max_input_channels", 0)) > 0:
-                lines.append(f"- index={idx} | name='{d.get('name')}' | inputs={d.get('max_input_channels')} | default_sr={d.get('default_samplerate')}")
+                lines.append(
+                    f"- index={idx} | name='{d.get('name')}' | inputs={d.get('max_input_channels')} | default_sr={d.get('default_samplerate')}"
+                )
         return "\n".join(lines)
 
     # ---------- Transcription (OpenAI Whisper API) ----------
-    async def transcribe_file_impl(self, audio_path: str, language: Optional[str] = None, prompt: Optional[str] = None) -> str:
+    async def transcribe_file_impl(
+        self,
+        audio_path: str,
+        language: Optional[str] = None,
+        prompt: Optional[str] = None,
+    ) -> str:
         """
         Transcribe an existing audio file via OpenAI Whisper API.
         """
@@ -113,7 +133,9 @@ class AudioBackend:
             lang = language or self.whisper_language
             prmpt = prompt or self.whisper_prompt
 
-            print(f"[audioTools] Transcribing file via OpenAI: model={self.whisper_model}, lang={lang}")
+            print(
+                f"[audioTools] Transcribing file via OpenAI: model={self.whisper_model}, lang={lang}"
+            )
             with open(audio_path, "rb") as f:
                 resp = self._openai_client.audio.transcriptions.create(
                     model=self.whisper_model,
@@ -153,7 +175,9 @@ class AudioBackend:
                 channels=channels,
                 device=device,
             )
-            return await self.transcribe_file_impl(tmp_path, language=language, prompt=prompt)
+            return await self.transcribe_file_impl(
+                tmp_path, language=language, prompt=prompt
+            )
         finally:
             if delete_tmp and tmp_path and os.path.exists(tmp_path):
                 try:
@@ -165,25 +189,25 @@ class AudioBackend:
     def _ensure_tts(self):
         if self._tts_engine is None:
             self._tts_engine = pyttsx3.init()
-            self._tts_engine.setProperty('rate', self.tts_rate)
-            self._tts_engine.setProperty('volume', self.tts_volume)
+            self._tts_engine.setProperty("rate", self.tts_rate)
+            self._tts_engine.setProperty("volume", self.tts_volume)
             if self.default_voice:
                 self._set_voice(self.default_voice)
 
     def _set_voice(self, voice_query: str) -> Optional[str]:
         """Select a pyttsx3 voice whose name/id contains the substring (case-insensitive)."""
         engine = self._tts_engine
-        voices = engine.getProperty('voices')
+        voices = engine.getProperty("voices")
         q = voice_query.lower()
         for v in voices:
             if q in (v.name or "").lower() or q in (v.id or "").lower():
-                engine.setProperty('voice', v.id)
+                engine.setProperty("voice", v.id)
                 return v.id
         return None
 
     def list_voices_text(self) -> str:
         self._ensure_tts()
-        voices = self._tts_engine.getProperty('voices')
+        voices = self._tts_engine.getProperty("voices")
         lines = []
         for v in voices:
             meta = []
@@ -197,7 +221,9 @@ class AudioBackend:
             lines.append(f"- id='{v.id}' | name='{v.name}' {meta_str}")
         return "Available TTS voices:\n" + "\n".join(lines)
 
-    async def tts_impl(self, text: str, out_path: str, voice: Optional[str] = None) -> str:
+    async def tts_impl(
+        self, text: str, out_path: str, voice: Optional[str] = None
+    ) -> str:
         if not text or not text.strip():
             return "❌ TTS input text is empty."
 
@@ -212,7 +238,7 @@ class AudioBackend:
 
             self._tts_engine.save_to_file(text, out_path)
             self._tts_engine.runAndWait()
-            vo = self._tts_engine.getProperty('voice')
+            vo = self._tts_engine.getProperty("voice")
             vinfo = f"voice='{voice}'" if voice else f"voice='{vo}'"
             if chosen is None and voice:
                 vinfo += " (requested voice not found; used current/default)"
@@ -227,23 +253,28 @@ _backend = AudioBackend()
 
 # ----- MCP tools -----
 
+
 @mcp.tool(
     name="transcribe_audio",
-    description="Transcribe an audio file to text using OpenAI Whisper API."
+    description="Transcribe an audio file to text using OpenAI Whisper API.",
 )
-async def transcribe_audio(audio_path: str, language: Optional[str] = None, prompt: Optional[str] = None) -> str:
+async def transcribe_audio(
+    audio_path: str, language: Optional[str] = None, prompt: Optional[str] = None
+) -> str:
     """
     Args:
       audio_path: Path to local audio file (wav, mp3, m4a, etc.)
       language: Optional BCP-47/ISO code, e.g., 'en', 'nb', 'no' (if omitted, auto-detect)
       prompt: Optional transcription hint/context/domain terms
     """
-    return await _backend.transcribe_file_impl(audio_path=audio_path, language=language, prompt=prompt)
+    return await _backend.transcribe_file_impl(
+        audio_path=audio_path, language=language, prompt=prompt
+    )
 
 
 @mcp.tool(
     name="transcribe_mic",
-    description="Record from microphone for a few seconds and transcribe via OpenAI Whisper API."
+    description="Record from microphone for a few seconds and transcribe via OpenAI Whisper API.",
 )
 async def transcribe_mic(
     duration: Optional[int] = None,
@@ -251,7 +282,7 @@ async def transcribe_mic(
     channels: Optional[int] = None,
     device: Optional[Union[int, str]] = None,
     language: Optional[str] = None,
-    prompt: Optional[str] = None
+    prompt: Optional[str] = None,
 ) -> str:
     """
     Args:
@@ -269,7 +300,10 @@ async def transcribe_mic(
         devices = sd.query_devices()
         match_idx = None
         for idx, d in enumerate(devices):
-            if int(d.get("max_input_channels", 0)) > 0 and name_q in (d.get("name") or "").lower():
+            if (
+                int(d.get("max_input_channels", 0)) > 0
+                and name_q in (d.get("name") or "").lower()
+            ):
                 match_idx = idx
                 break
         device = match_idx if match_idx is not None else None
@@ -284,8 +318,13 @@ async def transcribe_mic(
     )
 
 
-@mcp.tool(name="synthesize_speech", description="Convert text to speech and save to an audio file (offline pyttsx3).")
-async def synthesize_speech(text: str, out_path: str = "out.wav", voice: Optional[str] = None) -> str:
+@mcp.tool(
+    name="synthesize_speech",
+    description="Convert text to speech and save to an audio file (offline pyttsx3).",
+)
+async def synthesize_speech(
+    text: str, out_path: str = "out.wav", voice: Optional[str] = None
+) -> str:
     """
     Args:
       text: Text to synthesize
@@ -295,12 +334,17 @@ async def synthesize_speech(text: str, out_path: str = "out.wav", voice: Optiona
     return await _backend.tts_impl(text=text, out_path=out_path, voice=voice)
 
 
-@mcp.tool(name="list_tts_voices", description="List available TTS voices and their IDs.")
+@mcp.tool(
+    name="list_tts_voices", description="List available TTS voices and their IDs."
+)
 async def list_tts_voices() -> str:
     return _backend.list_voices_text()
 
 
-@mcp.tool(name="list_audio_devices", description="List available microphone/input audio devices.")
+@mcp.tool(
+    name="list_audio_devices",
+    description="List available microphone/input audio devices.",
+)
 async def list_audio_devices() -> str:
     return _backend.list_input_devices_text()
 

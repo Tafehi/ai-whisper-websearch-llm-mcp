@@ -8,6 +8,7 @@ from mcp.server.fastmcp import FastMCP
 # Initialize MCP tool server
 mcp = FastMCP(name="searchone", host="localhost", port=8001)
 
+
 class SearchOneApiSearch:
     def __init__(self):
         load_dotenv()
@@ -25,9 +26,8 @@ class SearchOneApiSearch:
         include_sites: Optional[str] = "",
         exclude_sites: Optional[str] = "",
         language: str = "en",
-        time_range: Optional[str] = None
+        time_range: Optional[str] = None,
     ) -> str:
-
         """
         Search the web using SearchOne (search1api).
 
@@ -56,14 +56,18 @@ class SearchOneApiSearch:
             "max_results": max_results,
             "crawl_results": crawl_results,
             "image": image,
-            "language": language
+            "language": language,
         }
 
         # Convert comma-separated strings to lists if provided
         if include_sites:
-            payload["include_sites"] = [s.strip() for s in include_sites.split(",") if s.strip()]
+            payload["include_sites"] = [
+                s.strip() for s in include_sites.split(",") if s.strip()
+            ]
         if exclude_sites:
-            payload["exclude_sites"] = [s.strip() for s in exclude_sites.split(",") if s.strip()]
+            payload["exclude_sites"] = [
+                s.strip() for s in exclude_sites.split(",") if s.strip()
+            ]
         if time_range:
             payload["time_range"] = time_range
 
@@ -147,6 +151,7 @@ class SearchOneApiSearch:
 # Create the backend instance
 _search_backend = SearchOneApiSearch()
 
+
 # Register a TOP-LEVEL tool (no 'self' in signature!)
 @mcp.tool(name="search_one", description="Search the web using SearchOne (search1api).")
 async def search_one(
@@ -158,7 +163,7 @@ async def search_one(
     include_sites: Optional[str] = "",
     exclude_sites: Optional[str] = "",
     language: str = "en",
-    time_range: Optional[str] = None
+    time_range: Optional[str] = None,
 ) -> str:
     return await _search_backend.search_one_impl(
         query=query,

@@ -20,6 +20,7 @@ if not url or not api_key:
 # Initialize MCP
 mcp = FastMCP(name="weather", host="localhost", port=8002)
 
+
 @mcp.tool()
 async def get_weather(city_name: str) -> dict:
     """
@@ -49,9 +50,8 @@ async def get_weather(city_name: str) -> dict:
             "wind_kph": data["current"]["wind_kph"],
         }
     else:
-        raise Exception(
-            f"API request failed: {response.status_code} - {response.text}"
-        )
+        raise Exception(f"API request failed: {response.status_code} - {response.text}")
+
 
 if __name__ == "__main__":
     print("Running MCP server on http://localhost:8002/mcp/")

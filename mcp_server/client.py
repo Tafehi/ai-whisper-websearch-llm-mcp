@@ -31,6 +31,10 @@ async def agents(llm_model, llm_provider, question):
                 "url": "http://localhost:8002/mcp/",
                 "transport": "streamable_http",
             },
+            "elevenLabs": {
+                "url": "http://localhost:8003/mcp/",
+                "transport": "streamable_http",
+            },
 
         }
     )
@@ -61,28 +65,5 @@ async def agents(llm_model, llm_provider, question):
 
     print(f"Agent Response: {final_content}")
 
-    # --- Optional TTS ---
-    tts_out = os.getenv("TTS_OUT")  # e.g., "out/reply.wav"
-    if tts_out:
-        voice = os.getenv("TTS_VOICE")
-        rate = os.getenv("TTS_RATE")
-        volume = os.getenv("TTS_VOLUME")
-
-        # Find synthesize_speech tool
-        tts_tool = next((t for t in tools if t.name == "synthesize_speech"), None)
-        if tts_tool:
-            args = {"text": final_content, "out_path": tts_out}
-            if voice: args["voice"] = voice
-            if rate: args["rate"] = int(rate)
-            if volume: args["volume"] = float(volume)
-
-            print(f"[audioTools] Synthesizing reply to {tts_out}...")
-            try:
-                tts_result = await tts_tool.ainvoke(args)
-                print(tts_result)
-            except Exception as e:
-                print(f"⚠️ TTS failed: {e}")
-        else:
-            print("⚠️ synthesize_speech tool not found in loaded tools.")
 
     return final_content
