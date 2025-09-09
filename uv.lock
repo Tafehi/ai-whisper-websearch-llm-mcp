@@ -25,6 +25,7 @@ dependencies = [
     { name = "langgraph" },
     { name = "lxml" },
     { name = "mcp", extra = ["cli"] },
+    { name = "mcp-elevenlabs" },
     { name = "numpy" },
     { name = "openai" },
     { name = "python-dotenv" },
@@ -52,6 +53,7 @@ requires-dist = [
     { name = "langgraph", specifier = ">=0.6.7" },
     { name = "lxml", specifier = ">=6.0.1" },
     { name = "mcp", extras = ["cli"], specifier = ">=1.13.1" },
+    { name = "mcp-elevenlabs", specifier = ">=0.0.2" },
     { name = "numpy", specifier = ">=2.3.2" },
     { name = "openai", specifier = ">=1.106.1" },
     { name = "python-dotenv", specifier = ">=1.1.1" },
@@ -1233,6 +1235,19 @@ wheels = [
 cli = [
     { name = "python-dotenv" },
     { name = "typer" },
+]
+
+[[package]]
+name = "mcp-elevenlabs"
+version = "0.0.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "httpx" },
+    { name = "mcp", extra = ["cli"] },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/20/79/c712d3553dcdfd6c5a634ea5b3f0535adccb07a97c134fa9e2f52132066b/mcp_elevenlabs-0.0.2.tar.gz", hash = "sha256:59bb1befdd17a691d44e257c8f8bb39c6ca32e7b6bb4f651b5eb63a435505cc8", size = 5118, upload-time = "2025-04-27T20:15:56.544Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/3a/4e/6bd0f71acc916f785b5f0dd0138f129584a295ad32efc913c6ceb20fa143/mcp_elevenlabs-0.0.2-py3-none-any.whl", hash = "sha256:81e787d7875828c39a2caa224436c1f2732f94295bbd79d99e0b1dac5a07b5e1", size = 5928, upload-time = "2025-04-27T20:15:55.494Z" },
 ]
 
 [[package]]

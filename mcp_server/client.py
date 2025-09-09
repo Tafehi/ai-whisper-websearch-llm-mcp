@@ -23,7 +23,7 @@ async def agents(llm_model, llm_provider, question):
     # Multi-server MCP client
     mcp_client = MultiServerMCPClient(
         {
-            "searchone": {
+            "serpSearch": {
                 "url": "http://localhost:8001/mcp/",
                 "transport": "streamable_http",
             },
@@ -31,10 +31,7 @@ async def agents(llm_model, llm_provider, question):
                 "url": "http://localhost:8002/mcp/",
                 "transport": "streamable_http",
             },
-            "audioTools": {
-                "url": "http://localhost:8003/mcp/",
-                "transport": "streamable_http",
-            },
+
         }
     )
 

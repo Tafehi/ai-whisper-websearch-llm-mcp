@@ -18,6 +18,7 @@ dependencies = [
     "langchain-ollama>=0.3.7",
     "langgraph>=0.6.7",
     "lxml>=6.0.1",
+    "mcp-elevenlabs>=0.0.2",
     "mcp[cli]>=1.13.1",
     "numpy>=2.3.2",
     "openai>=1.106.1",

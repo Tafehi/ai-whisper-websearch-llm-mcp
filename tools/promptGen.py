@@ -29,9 +29,9 @@ def system_prompt() -> str:
 def tool_use_instructions() -> str:
     return (
         "You MUST use the provided 'SEARCH RESULTS' to answer any time-sensitive or factual question. "
-        "Extract the most relevant facts and cite up to 3 sources with title and URL. "
+        "Extract the most relevant facts and give details explanation at least in 5 paragraphs."
         "Include the full 'Collected at' timestamp verbatim in your answer, including time and time zone. "
-        "If the search results are insufficient or outdated, you MAY call 'searchone' multiple times "
+        "If the search results are insufficient or outdated, you MAY call 'serpSearch' multiple times "
         "with refined keywords, time_range='day', crawl_results>=2, and include_sites for authoritative sources. "
         "Ensure that each search fetches the most recent data available, and clearly indicate the time and time zone of data collection in your final response."
     )
