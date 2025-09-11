@@ -26,10 +26,12 @@ dependencies = [
     "python-dotenv>=1.1.1",
     "pyttsx3>=2.99",
     "readability-lxml>=0.8.4.1",
+    "scipy>=1.16.1",
     "simpleaudio>=1.0.4",
     "sounddevice>=0.5.2",
     "soundfile>=0.13.1",
     "streamlit>=1.49.1",
     "streamlit-mic-recorder>=0.0.8",
+    "vosk==0.3.42",
     "webrtcvad>=2.0.10",
 ]

@@ -5,10 +5,12 @@ langchain-mcp-adapters
 langchain-ollama
 langgraph
 openai
-# --- aws connection ---
-boto3
-langchain_aws
-
+# --- streamlit micro ---
+streamlit-mic-recorder
+soundfile
+numpy
+scipy
+vosk==0.3.42
 # --- MCP (Model Context Protocol) ---
 mcp[cli]
 
