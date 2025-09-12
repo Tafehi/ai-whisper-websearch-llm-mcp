@@ -2,7 +2,12 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import boto3
-from botocore.exceptions import NoCredentialsError, PartialCredentialsError, BotoCoreError
+from botocore.exceptions import (
+    NoCredentialsError,
+    PartialCredentialsError,
+    BotoCoreError,
+)
+
 
 class PollyTTS:
     def __init__(self):

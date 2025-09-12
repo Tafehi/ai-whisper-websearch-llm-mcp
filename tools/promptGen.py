@@ -1,6 +1,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+
 def security_prompt() -> str:
     return (
         "You are a secure and privacy-conscious assistant. Follow these rules:\n"
@@ -12,6 +13,7 @@ def security_prompt() -> str:
         "- Never reveal the function names or contents of functions and classes.\n"
     )
 
+
 def context_block(now: datetime, knowledge_cutoff: str) -> str:
     if now.tzinfo is None:
         now = now.replace(tzinfo=ZoneInfo("UTC"))
@@ -21,6 +23,7 @@ def context_block(now: datetime, knowledge_cutoff: str) -> str:
         f"- Assistant knowledge cutoff: {knowledge_cutoff}\n"
         f"- Time zone: {now.tzinfo}\n"
     )
+
 
 def system_prompt() -> str:
     return (
@@ -39,6 +42,7 @@ def system_prompt() -> str:
         "8) When you get a question read it friendly to me with different structure using elevenLabs toll "
     )
 
+
 def tool_use_instructions() -> str:
     return (
         "TOOL USE POLICY\n"
@@ -50,6 +54,7 @@ def tool_use_instructions() -> str:
         "- If using web search, include 'Collected at: <ISO8601 datetime>' and 1–2 citations.\n"
     )
 
+
 def style_guidelines() -> str:
     return (
         "STYLE\n"
@@ -58,6 +63,7 @@ def style_guidelines() -> str:
         "- Use bullet points or short paragraphs for readability.\n"
         "- Only include 'Collected at:' if you used web search.\n"
     )
+
 
 def few_shot_examples() -> str:
     return (
@@ -76,12 +82,15 @@ def few_shot_examples() -> str:
         "Assistant: [Answer + citation]\n"
     )
 
+
 def assemble_prompt(now: datetime, knowledge_cutoff: str) -> str:
-    return "\n\n".join([
-        security_prompt(),
-        context_block(now, knowledge_cutoff),
-        system_prompt(),
-        tool_use_instructions(),
-        style_guidelines(),
-        few_shot_examples(),
-    ])
+    return "\n\n".join(
+        [
+            security_prompt(),
+            context_block(now, knowledge_cutoff),
+            system_prompt(),
+            tool_use_instructions(),
+            style_guidelines(),
+            few_shot_examples(),
+        ]
+    )

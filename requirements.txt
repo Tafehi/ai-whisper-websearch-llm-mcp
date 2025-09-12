@@ -13,8 +13,8 @@ scipy
 vosk==0.3.42
 # --- MCP (Model Context Protocol) ---
 mcp[cli]
-
-
+# --- NEO4J DB ---
+neo4j
 # --- Web tools for browsing (fetch/scrape/summarize) ---
 httpx
 beautifulsoup4

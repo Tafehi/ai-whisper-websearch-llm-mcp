@@ -32,7 +32,9 @@ class VoskASR:
         """
         Normalize any WAV to 16 kHz, 16-bit PCM, mono (bytes) for Vosk recognizer.
         """
-        data, sr = sf.read(io.BytesIO(wav_bytes), dtype="int16", always_2d=True)  # (n, ch)
+        data, sr = sf.read(
+            io.BytesIO(wav_bytes), dtype="int16", always_2d=True
+        )  # (n, ch)
         mono = data.mean(axis=1).astype(np.int16)
         if sr != self.sample_rate:
             # high-quality resample

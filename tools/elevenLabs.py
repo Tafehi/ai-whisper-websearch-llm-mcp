@@ -1,4 +1,3 @@
-
 from elevenlabs.client import ElevenLabs
 from elevenlabs import stream
 
@@ -10,7 +9,6 @@ audio_stream = client.text_to_speech.stream(
     model_id="eleven_multilingual_v2",
 )
 stream(audio_stream)
-
 
 
 # import os

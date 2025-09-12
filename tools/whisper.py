@@ -2,7 +2,7 @@
 
 # from langchain_community.tools import ElevenLabsText2SpeechTool
 #
- # picks up ELEVENLABS_API_KEY from .env
+# picks up ELEVENLABS_API_KEY from .env
 
 #
 # ELEVENLABS_API_KEY = os.getenv("ELEVENLABS_API_KEY"),
@@ -20,9 +20,7 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-client = ElevenLabs(
-    api_key=os.getenv("ELEVENLABS_API_KEY")
-)
+client = ElevenLabs(api_key=os.getenv("ELEVENLABS_API_KEY"))
 
 response = client.conversational_ai.agents.create(
     name="My conversational agent",
@@ -32,6 +30,5 @@ response = client.conversational_ai.agents.create(
                 "prompt": "You are a helpful assistant that can answer questions and help with tasks.",
             }
         }
-    }
+    },
 )
-
